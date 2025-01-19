@@ -65,3 +65,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* scrollbar */
+::-webkit-scrollbar {
+  height: 5px; /* Height for horizontal scrollbar */
+  width: 5px; /* Width for vertical scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #b8b8b8; /* Thumb (scroll indicator) color */
+  border-radius: 8px; /* Rounded corners for the scrollbar thumb */
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #616161; /* Track (background) color */
+  border-radius: 8px; /* Rounded corners for the track */
+}

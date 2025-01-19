@@ -20,10 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${interFont.className} antialiased`}>
+      <body className={`${interFont.className} antialiased px-3`}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <Header />
-          {children}
+          <main className="h-[calc(100vh-4rem)] mt-16">{children}</main>
         </ThemeProvider>
       </body>
     </html>

@@ -8,8 +8,8 @@ const logoFont = Racing_Sans_One({
 
 export default function Header() {
   return (
-    <nav className="px-2 sm:px-5 py-3 sticky flex items-center justify-between h-12">
-      <h1 className={`${logoFont.className} text-xl`}>Flash⚡</h1>
+    <nav className="px-2 sm:px-5 py-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-16 shadow-md backdrop-blur-xl">
+      <h1 className={`${logoFont.className} text-xl text-white`}>Flash⚡</h1>
 
       <div className="flex items-center gap-2">
         <Button>Signin</Button>
@@ -17,8 +17,8 @@ export default function Header() {
       </div>
 
       {/* Lighting effect */}
-      <div className="absolute -z-10 inset-0 bg-gradient-to-r h-28 from-sky-600 to-transparent opacity-30 blur-3xl" />
-      <div className="absolute -z-10 left-1/4 inset-0 bg-gradient-to-r h-10 w-40 bg-green-500 opacity-35 blur-2xl rounded-full" />
+      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r h-28 from-sky-600 to-transparent opacity-50 blur-3xl pointer-events-none" />
+      <div className="absolute left-1/4 top-0 h-10 w-40 bg-gradient-to-r from-green-500 to-transparent opacity-80 blur-2xl rounded-full pointer-events-none" />
     </nav>
   );
 }
