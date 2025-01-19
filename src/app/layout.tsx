@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/themeProvider";
+import Header from "@/components/custom/header";
+import { Inter } from "next/font/google";
+
+const interFont = Inter({
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "Boom",
+  title: "Flash",
   description: "Build what you want.",
 };
 
@@ -14,8 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={`${interFont.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark">
+          <Header />
           {children}
         </ThemeProvider>
       </body>
