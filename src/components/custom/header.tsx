@@ -1,5 +1,13 @@
+"use client";
+
+import { useEffect } from "react";
 import { Button } from "../ui/button";
 import { Racing_Sans_One } from "next/font/google";
+import Cookies from "js-cookie";
+import { getUserInfo } from "@/lib/getUserInfo";
+import { useAtom } from "jotai";
+import { userAtom } from "@/lib/globalAtoms";
+import { globalStringConstants } from "@/constants/globalStringConstants";
 
 const logoFont = Racing_Sans_One({
   subsets: ["latin"],
@@ -7,6 +15,25 @@ const logoFont = Racing_Sans_One({
 });
 
 export default function Header() {
+  // atoms
+  const [user, setUser] = useAtom(userAtom);
+
+  // effect
+  useEffect(() => {
+    if (!user) {
+      const flashAccessToken = Cookies.get(
+        globalStringConstants.flashAccessTokenKey
+      );
+      if (flashAccessToken) {
+        getUserInfo(flashAccessToken).then((userInfo) => {
+          if (userInfo && userInfo.data) {
+            setUser(userInfo.data);
+          }
+        });
+      }
+    }
+  }, []);
+
   return (
     <nav className="px-2 sm:px-5 py-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-12 shadow-md backdrop-blur-xl">
       <h1 className={`${logoFont.className} text-xl text-white`}>Flash⚡</h1>

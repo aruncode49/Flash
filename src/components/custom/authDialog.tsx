@@ -11,9 +11,10 @@ import {
 import { globalStringConstants } from "@/constants/globalStringConstants";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
 import { useSetAtom } from "jotai";
 import { userAtom } from "@/lib/globalAtoms";
+import Cookies from "js-cookie";
+import { getUserInfo } from "@/lib/getUserInfo";
 
 interface IAuthDialog {
   open: boolean;
@@ -24,19 +25,19 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
   // atoms state
   const setUser = useSetAtom(userAtom);
 
-  // action
+  // actions
   const onGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      const userInfo = await axios.get(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
-        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
-      );
+      const userInfo = await getUserInfo(tokenResponse.access_token);
       if (userInfo && userInfo.data) {
         setUser(userInfo.data);
-
-        // save user in database
-        // ------------
-
+        Cookies.set(
+          globalStringConstants.flashAccessTokenKey,
+          tokenResponse.access_token,
+          {
+            expires: 7,
+          }
+        );
         onClose(); // close the dialog
       }
     },

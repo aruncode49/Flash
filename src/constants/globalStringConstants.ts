@@ -1,4 +1,7 @@
 export const globalStringConstants = {
+  // key constant
+  flashAccessTokenKey: "flash_access_token",
+
   // landing page
   heroTitle: "What do you want to build?",
   heroDescription: "Prompt, run, edit, and deploy full-stack web apps.",
