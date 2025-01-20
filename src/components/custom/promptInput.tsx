@@ -11,12 +11,13 @@ import AuthDialog from "./authDialog";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { IPromptMessage } from "@/interfaces/promptMessage";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function PromptInput() {
   // hooks
   const onCreateWorkspace = useMutation(api.workspace.createWorkspace);
   const router = useRouter();
+  const pathName = usePathname();
 
   // state
   const [prompt, setPrompt] = useState<string>("");
@@ -52,7 +53,7 @@ export default function PromptInput() {
       userId: user.id,
     });
 
-    setPromptMessage(promptMessage);
+    setPromptMessage([promptMessage]);
     router.push(`/workspace/${workspaceId}`);
 
     setPrompt("");
@@ -69,8 +70,10 @@ export default function PromptInput() {
   };
 
   return (
-    <div className="w-full mt-8">
-      <div className="bg-gradient-to-br rounded-lg w-full sm:w-[30rem] p-[0.7px] pb-0 from-blue-500 via-green-500 via-20% to-60% to-transparent mx-auto">
+    <div
+      className={`w-full mt-8 ${!pathName.includes("workspace") && "sm:w-[30rem]"}`}
+    >
+      <div className="bg-gradient-to-br rounded-lg w-full p-[0.7px] pb-0 from-blue-500 via-green-500 via-20% to-60% to-transparent mx-auto">
         <form
           onSubmit={onGenerateResult}
           className="bg-neutral-900 h-[8rem] p-3 rounded-lg border border-l-0 border-neutral-700"
@@ -98,16 +101,18 @@ export default function PromptInput() {
         </form>
       </div>
 
-      <div className="mt-8 flex flex-wrap text-[12px] max-w-xl mx-auto justify-center gap-x-4 gap-y-2">
-        {globalStringConstants.promptSuggestions.map((value, index) => (
-          <div
-            className="p-1 px-4 rounded-full border cursor-pointer text-neutral-400 hover:text-white transition-all hover:bg-neutral-900"
-            key={index}
-          >
-            {value}
-          </div>
-        ))}
-      </div>
+      {!pathName.includes("workspace") && (
+        <div className="mt-8 flex flex-wrap text-[12px] max-w-xl mx-auto justify-center gap-x-4 gap-y-2">
+          {globalStringConstants.promptSuggestions.map((value, index) => (
+            <div
+              className="p-1 px-4 rounded-full border cursor-pointer text-neutral-400 hover:text-white transition-all hover:bg-neutral-900"
+              key={index}
+            >
+              {value}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Auth Dialog */}
       <AuthDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} />

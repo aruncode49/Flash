@@ -29,7 +29,7 @@ export default function RootLayout({
           <body className={`${interFont.className} antialiased px-3`}>
             <ThemeProvider attribute="class" defaultTheme="dark">
               <Header />
-              <main className="h-[calc(100vh-3rem)] mt-12">{children}</main>
+              <main className="h-[calc(100vh-3.5rem)] mt-14">{children}</main>
             </ThemeProvider>
           </body>
         </GoogleOAuthProvider>

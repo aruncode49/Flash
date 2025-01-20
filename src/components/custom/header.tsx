@@ -7,10 +7,12 @@ import Cookies from "js-cookie";
 import { useAtom } from "jotai";
 import { userAtom } from "@/lib/globalAtoms";
 import { globalStringConstants } from "@/constants/globalStringConstants";
-import { useQuery } from "convex/react";
+import { useConvex } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import Loader from "./loader";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const logoFont = Racing_Sans_One({
   subsets: ["latin"],
@@ -18,8 +20,9 @@ const logoFont = Racing_Sans_One({
 });
 
 export default function Header() {
-  const userId = Cookies.get(globalStringConstants.userId) as Id<"users">;
-  const _user = useQuery(api.users.getUser, { id: userId });
+  // hooks
+  const convex = useConvex();
+  const pathName = usePathname();
 
   // state
   const [loading, setLoading] = useState<boolean>(false);
@@ -27,30 +30,50 @@ export default function Header() {
   // atoms
   const [user, setUser] = useAtom(userAtom);
 
-  // effect
-  useEffect(() => {
-    setLoading(_user === undefined);
-    if (_user && !user) {
+  // actions
+  const getUser = async (userId: Id<"users">) => {
+    setLoading(true);
+    const user = await convex.query(api.users.getUser, {
+      id: userId,
+    });
+    if (user) {
       setUser({
-        id: _user._id,
-        email: _user.email,
-        name: _user.name,
-        picture: _user.picture,
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
       });
     }
-  }, [_user, user]);
+    setLoading(false);
+  };
+
+  // effect
+  useEffect(() => {
+    const userId = Cookies.get(globalStringConstants.userId);
+    if (!user && userId) {
+      getUser(userId as Id<"users">);
+    }
+  }, []);
 
   return (
     <>
       {loading && <Loader />}
 
-      <nav className="px-2 sm:px-5 py-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-12 shadow-md backdrop-blur-xl">
-        <h1 className={`${logoFont.className} text-xl text-white`}>Flash⚡</h1>
+      <nav
+        className={`p-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 shadow-md backdrop-blur-xl ${pathName.includes("workspace") && "border-b"}`}
+      >
+        <Link href="/">
+          <h1 className={`${logoFont.className} text-xl text-white`}>
+            Flash⚡
+          </h1>
+        </Link>
 
-        <div className="flex items-center gap-2">
-          <Button>Signin</Button>
-          <Button variant="secondary">Get Started</Button>
-        </div>
+        {/* Get Started Button (Open SignIn Dialog) */}
+        {!user && <Button variant="secondary">Get Started</Button>}
+
+        {/* Export & Deploy Button */}
+        {/* Export */}
+        {/* Deploy */}
 
         {/* Lighting effect */}
         <div className="absolute top-0 left-0 right-0 bg-gradient-to-r h-28 from-sky-600 to-transparent opacity-50 blur-3xl pointer-events-none" />

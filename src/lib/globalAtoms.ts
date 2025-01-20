@@ -4,7 +4,9 @@ import { atom } from "jotai";
 
 export const userAtom = atom<IUser | null>(null);
 
-export const promptAtom = atom<IPromptMessage>({
-  role: "user",
-  message: "",
-});
+export const promptAtom = atom<IPromptMessage[]>([
+  {
+    role: "user",
+    message: "",
+  },
+]);
