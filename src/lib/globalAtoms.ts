@@ -1,12 +1,10 @@
+import { IPromptMessage } from "@/interfaces/promptMessage";
 import { IUser } from "@/interfaces/user";
 import { atom } from "jotai";
 
 export const userAtom = atom<IUser | null>(null);
 
-export const promptAtom = atom<{
-  role: "user" | null;
-  message: string;
-}>({
-  role: null,
+export const promptAtom = atom<IPromptMessage>({
+  role: "user",
   message: "",
 });

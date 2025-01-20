@@ -2,24 +2,33 @@
 
 import { globalStringConstants } from "@/constants/globalStringConstants";
 import { Button } from "../ui/button";
-import { MoveRight } from "lucide-react";
+import { Loader, MoveRight } from "lucide-react";
 import { BsStars } from "react-icons/bs";
 import { FormEvent, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { promptAtom, userAtom } from "@/lib/globalAtoms";
 import AuthDialog from "./authDialog";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { IPromptMessage } from "@/interfaces/promptMessage";
+import { useRouter } from "next/navigation";
 
 export default function PromptInput() {
+  // hooks
+  const onCreateWorkspace = useMutation(api.workspace.createWorkspace);
+  const router = useRouter();
+
   // state
   const [prompt, setPrompt] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // atoms
   const setPromptMessage = useSetAtom(promptAtom);
   const user = useAtomValue(userAtom);
 
   // actions
-  const onGenerateResult = (
+  const onGenerateResult = async (
     e: FormEvent | KeyboardEvent,
     suggestion?: string
   ) => {
@@ -31,12 +40,23 @@ export default function PromptInput() {
       return;
     }
 
-    setPromptMessage({
+    setLoading(true);
+    const promptMessage: IPromptMessage = {
       role: "user",
       message: suggestion ?? prompt,
+    };
+
+    // create workspace
+    const workspaceId = await onCreateWorkspace({
+      messages: [promptMessage],
+      userId: user.id,
     });
 
+    setPromptMessage(promptMessage);
+    router.push(`/workspace/${workspaceId}`);
+
     setPrompt("");
+    setLoading(false);
   };
 
   const onKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -70,7 +90,7 @@ export default function PromptInput() {
                 size="icon"
                 className="h-7 w-8"
               >
-                <MoveRight />
+                {loading ? <Loader className="animate-spin" /> : <MoveRight />}
               </Button>
             )}
           </div>

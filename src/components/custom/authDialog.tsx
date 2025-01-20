@@ -26,7 +26,7 @@ interface IAuthDialog {
 
 export default function AuthDialog({ open, onClose }: IAuthDialog) {
   // hooks
-  const createUser = useMutation(api.users.createUser);
+  const onCreateUser = useMutation(api.users.createUser);
 
   // atoms state
   const setUser = useSetAtom(userAtom);
@@ -47,7 +47,7 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
         const data = userInfo.data as IUser;
 
         // save user data in db and set the user uid in cookies
-        const userId = await createUser({
+        const userId = await onCreateUser({
           email: data.email,
           name: data.name,
           picture: data.picture,
