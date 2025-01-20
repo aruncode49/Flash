@@ -8,7 +8,7 @@ const logoFont = Racing_Sans_One({
 
 export default function Header() {
   return (
-    <nav className="px-2 sm:px-5 py-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-16 shadow-md backdrop-blur-xl">
+    <nav className="px-2 sm:px-5 py-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-12 shadow-md backdrop-blur-xl">
       <h1 className={`${logoFont.className} text-xl text-white`}>Flash⚡</h1>
 
       <div className="flex items-center gap-2">

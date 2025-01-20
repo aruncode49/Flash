@@ -5,21 +5,45 @@ import { Button } from "../ui/button";
 import { MoveRight } from "lucide-react";
 import { BsStars } from "react-icons/bs";
 import { FormEvent, useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { promptAtom, userAtom } from "@/lib/globalAtoms";
+import AuthDialog from "./authDialog";
 
 export default function PromptInput() {
   // state
   const [prompt, setPrompt] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
+  // atoms
+  const setPromptMessage = useSetAtom(promptAtom);
+  const user = useAtomValue(userAtom);
 
   // actions
-  const onSubmit = (e: FormEvent | KeyboardEvent) => {
+  const onGenerateResult = (
+    e: FormEvent | KeyboardEvent,
+    suggestion?: string
+  ) => {
     e.preventDefault();
+
+    // open auth dialog if the user is not authenticated
+    if (!user) {
+      setIsDialogOpen(true);
+      return;
+    }
+
+    setPromptMessage({
+      role: "user",
+      message: suggestion ?? prompt,
+    });
+
+    setPrompt("");
   };
 
   const onKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Prevent default behavior of "Enter" adding a newline
       if (prompt.trim()) {
-        onSubmit(e);
+        onGenerateResult(e);
       }
     }
   };
@@ -28,7 +52,7 @@ export default function PromptInput() {
     <div className="w-full mt-8">
       <div className="bg-gradient-to-br rounded-lg w-full sm:w-[30rem] p-[0.7px] pb-0 from-blue-500 via-green-500 via-20% to-60% to-transparent mx-auto">
         <form
-          onSubmit={onSubmit}
+          onSubmit={onGenerateResult}
           className="bg-neutral-900 h-[8rem] p-3 rounded-lg border border-l-0 border-neutral-700"
         >
           <div className="flex h-[70%] gap-2">
@@ -64,6 +88,9 @@ export default function PromptInput() {
           </div>
         ))}
       </div>
+
+      {/* Auth Dialog */}
+      <AuthDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
     </div>
   );
 }
