@@ -14,7 +14,10 @@ import { FcGoogle } from "react-icons/fc";
 import { useSetAtom } from "jotai";
 import { userAtom } from "@/lib/globalAtoms";
 import Cookies from "js-cookie";
-import { getUserInfo } from "@/lib/getUserInfo";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { IUser } from "@/interfaces/user";
+import axios from "axios";
 
 interface IAuthDialog {
   open: boolean;
@@ -22,22 +25,38 @@ interface IAuthDialog {
 }
 
 export default function AuthDialog({ open, onClose }: IAuthDialog) {
+  // hooks
+  const createUser = useMutation(api.users.createUser);
+
   // atoms state
   const setUser = useSetAtom(userAtom);
 
   // actions
+  const getUserInfo = async (accessToken: string) => {
+    const userInfo = await axios.get(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return userInfo;
+  };
+
   const onGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const userInfo = await getUserInfo(tokenResponse.access_token);
       if (userInfo && userInfo.data) {
-        setUser(userInfo.data);
-        Cookies.set(
-          globalStringConstants.flashAccessTokenKey,
-          tokenResponse.access_token,
-          {
-            expires: 7,
-          }
-        );
+        const data = userInfo.data as IUser;
+
+        // save user data in db and set the user uid in cookies
+        const userId = await createUser({
+          email: data.email,
+          name: data.name,
+          picture: data.picture,
+        });
+
+        setUser({ ...data, id: userId });
+        Cookies.set(globalStringConstants.userId, userId, {
+          expires: 7,
+        });
         onClose(); // close the dialog
       }
     },
