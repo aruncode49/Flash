@@ -21,7 +21,9 @@ export default function Home() {
         <p className="mt-3 text-neutral-400 text-sm">
           {globalStringConstants.heroDescription}
         </p>
-        <PromptInput />
+        <div className="mt-8">
+          <PromptInput />
+        </div>
       </div>
     </section>
   );

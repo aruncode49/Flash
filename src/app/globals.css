@@ -82,3 +82,7 @@
   background-color: #616161; /* Track (background) color */
   border-radius: 8px; /* Rounded corners for the track */
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

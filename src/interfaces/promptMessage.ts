@@ -1,4 +1,4 @@
 export interface IPromptMessage {
-  role: "user" | "admin";
+  role: "user" | "ai";
   message: string;
 }
