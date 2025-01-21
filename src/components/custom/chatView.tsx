@@ -78,7 +78,7 @@ export default function ChatView() {
   return (
     <div className="flex flex-col h-full max-h-[calc(100vh-5rem)]">
       <div
-        className="flex-1 overflow-y-scroll scrollbar-hide rounded-lg"
+        className="flex-1 overflow-y-scroll scrollbar-hide rounded-md"
         style={{
           fontFamily: "Arial",
         }}
@@ -86,7 +86,7 @@ export default function ChatView() {
         {promptMessage.map((message, index) => (
           <div
             key={index}
-            className="px-3 py-2 bg-neutral-700 mb-2 rounded-lg flex items-start gap-2 text-xs font-normal"
+            className="px-3 py-2 bg-neutral-700 mb-2 rounded-sm flex items-start gap-2 text-xs font-normal"
           >
             {message.role === "user" && user?.picture && (
               <Image
