@@ -7,6 +7,7 @@ export default defineSchema({
     email: v.string(),
     picture: v.string(),
     token: v.optional(v.number()),
+    activePlan: v.optional(v.string()),
   }),
 
   workspace: defineTable({

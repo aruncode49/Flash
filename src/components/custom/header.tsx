@@ -9,9 +9,9 @@ import { globalStringConstants } from "@/constants/globalStringConstants";
 import { useConvex } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "./logo";
+import { TPlans } from "@/interfaces/user";
 
 export default function Header() {
   // hooks
@@ -37,6 +37,7 @@ export default function Header() {
         name: user.name,
         picture: user.picture,
         token: user.token ?? 0,
+        activePlan: user.activePlan as TPlans,
       });
     }
   };
@@ -49,6 +50,11 @@ export default function Header() {
     }
   }, []);
 
+  // early return from pricing page
+  if (pathName.includes("pricing")) {
+    return null;
+  }
+
   return (
     <>
       <nav
@@ -59,7 +65,7 @@ export default function Header() {
         {pathName.includes("workspace") && (
           <p
             title={promptMessage[0]?.message}
-            className="text-sm capitalize z-50 max-w-[18rem] line-clamp-1"
+            className="text-xs capitalize z-50 max-w-[18rem] line-clamp-1"
           >
             {promptMessage[0]?.message}
           </p>

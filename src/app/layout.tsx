@@ -33,7 +33,9 @@ export default function RootLayout({
               <Header />
               <SidebarProvider defaultOpen={false}>
                 <AppSidebar />
-                <main className="h-[calc(100vh-3.5rem)] mt-14">{children}</main>
+                <main className="h-[calc(100vh-3.5rem)] mt-14 w-full">
+                  {children}
+                </main>
               </SidebarProvider>
             </ThemeProvider>
           </body>

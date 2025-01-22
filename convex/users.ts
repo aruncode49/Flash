@@ -20,6 +20,7 @@ export const createUser = mutation({
         email: args.email,
         picture: args.picture,
         token: 50000,
+        activePlan: "Free",
       });
 
       return userId;
