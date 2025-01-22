@@ -4,23 +4,20 @@ import { globalStringConstants } from "@/constants/globalStringConstants";
 import { Button } from "../ui/button";
 import { Loader as LoaderIcon, MoveRight } from "lucide-react";
 import { BsStars } from "react-icons/bs";
-import { FormEvent, useState } from "react";
-import { useAtom, useAtomValue } from "jotai";
+import { FormEvent, useEffect, useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
 import { promptAtom, userAtom } from "@/lib/globalAtoms";
 import AuthDialog from "./authDialog";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import { Id } from "../../../convex/_generated/dataModel";
+import { usePathname, useRouter } from "next/navigation";
 import Loader from "./loader";
 
 export default function PromptInput() {
   // hooks
   const onCreateWorkspace = useMutation(api.workspace.createWorkspace);
-  const onUpdateWorkspace = useMutation(api.workspace.updateWorkspace);
   const router = useRouter();
   const pathName = usePathname();
-  const { id } = useParams();
 
   // state
   const [prompt, setPrompt] = useState<string>("");
@@ -28,7 +25,7 @@ export default function PromptInput() {
   const [loading, setLoading] = useState<boolean>(false);
 
   // atoms
-  const [promptMessage, setPromptMessage] = useAtom(promptAtom);
+  const setPromptMessage = useSetAtom(promptAtom);
   const user = useAtomValue(userAtom);
 
   // actions
@@ -44,22 +41,8 @@ export default function PromptInput() {
       return;
     }
 
-    setLoading(true);
-
-    // update workspace
-    if (pathName.includes("workspace") && id) {
-      const _promptMessage = promptMessage
-        .map((item) => {
-          return { ...item };
-        })
-        .concat({ role: "user", message: prompt });
-
-      await onUpdateWorkspace({
-        workspaceId: id as Id<"workspace">,
-        messages: _promptMessage,
-      });
-    } else {
-      // create new workspace and navigate to the user on workspace
+    if (!pathName.includes("workspace")) {
+      setLoading(true);
       const workspaceId = await onCreateWorkspace({
         messages: [
           {
@@ -69,7 +52,6 @@ export default function PromptInput() {
         ],
         userId: user.id,
       });
-
       router.push(`/workspace/${workspaceId}`);
     }
 
@@ -93,6 +75,12 @@ export default function PromptInput() {
       }
     }
   };
+
+  useEffect(() => {
+    if (!pathName.includes("workspace")) {
+      setPromptMessage([]); // reset prompt message when user navigate to any other page than workspace
+    }
+  }, []);
 
   return (
     <div

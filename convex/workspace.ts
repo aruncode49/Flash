@@ -36,3 +36,15 @@ export const updateWorkspace = mutation({
     });
   },
 });
+
+export const updateWorkspaceCode = mutation({
+  args: {
+    workspaceId: v.id("workspace"),
+    files: v.any(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.workspaceId, {
+      fileData: args.files,
+    });
+  },
+});

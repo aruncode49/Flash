@@ -1,6 +1,6 @@
 "use client";
 
-import { useConvex } from "convex/react";
+import { useConvex, useMutation } from "convex/react";
 import { useParams } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
@@ -18,67 +18,80 @@ export default function ChatView() {
   // hooks
   const { id } = useParams();
   const convex = useConvex();
+  const onUpdateWorkspaceChat = useMutation(api.workspace.updateWorkspace);
 
   // atoms
   const [promptMessage, setPromptMessage] = useAtom(promptAtom);
   const user = useAtomValue(userAtom);
 
   // state
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isGeneratingChat, setIsGeneratingChat] = useState<boolean>(false);
+  const [isFetchingChats, setIsFetchingChats] = useState<boolean>(false);
 
   // refs
   const isGenerating = useRef<boolean>(false);
 
   // actions
   const onGetWorkspace = async () => {
+    setIsFetchingChats(true);
     const workspace = await convex.query(api.workspace.getWorkspace, {
       workspaceId: id as Id<"workspace">,
     });
     if (workspace) {
       setPromptMessage(workspace.messages);
     }
+    setIsFetchingChats(false);
   };
 
   const onGenerateAIResponse = async () => {
     if (isGenerating.current) return; // Prevent multiple executions
     isGenerating.current = true;
 
-    setLoading(true);
+    setIsGeneratingChat(true);
     const _prompt = JSON.stringify(promptMessage) + prompt.chatPrompt;
     const response = await axios.post("/api/ai-chat", {
       prompt: _prompt,
     });
-    if (response.data.success) {
-      setPromptMessage((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          message: response.data.data,
-        },
-      ]);
+    if (response.data.success && id) {
+      const _promptMessage = promptMessage
+        .map((item) => {
+          return { ...item };
+        })
+        .concat({ role: "ai", message: response.data.data });
+
+      setPromptMessage(_promptMessage);
+
+      await onUpdateWorkspaceChat({
+        messages: _promptMessage,
+        workspaceId: id as Id<"workspace">,
+      });
     }
-    setLoading(false);
+
+    setIsGeneratingChat(false);
     isGenerating.current = false;
   };
 
   // effects
   useEffect(() => {
-    id && onGetWorkspace();
-  }, [id]);
+    // Ensure id exists and is not empty
+    if (id) {
+      onGetWorkspace(); // Fetch workspace data
+    }
+  }, [id]); // Only run when id changes
 
   useEffect(() => {
-    if (promptMessage && promptMessage.length > 0) {
+    if (promptMessage.length > 0) {
       const role = promptMessage[promptMessage.length - 1].role;
       if (role === "user") {
-        onGenerateAIResponse();
+        onGenerateAIResponse(); // Generate AI response if the user's message is the latest
       }
     }
-  }, [promptMessage]);
+  }, [promptMessage]); // Only run when promptMessage changes
 
   return (
     <div className="flex flex-col h-full max-h-[calc(100vh-5rem)]">
       <div
-        className="flex-1 overflow-y-scroll scrollbar-hide rounded-md"
+        className="flex-1 overflow-y-scroll scrollbar-hide rounded-sm"
         style={{
           fontFamily: "Arial",
         }}
@@ -102,7 +115,7 @@ export default function ChatView() {
         ))}
 
         {/* Generating Loader */}
-        {loading && (
+        {(isGeneratingChat || isFetchingChats) && (
           <Loader className="animate-spin size-5 text-neutral-300 mx-auto my-2" />
         )}
       </div>

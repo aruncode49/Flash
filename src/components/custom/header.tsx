@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "../ui/button";
 import { Racing_Sans_One } from "next/font/google";
 import Cookies from "js-cookie";
@@ -10,7 +10,6 @@ import { globalStringConstants } from "@/constants/globalStringConstants";
 import { useConvex } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import Loader from "./loader";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -25,14 +24,12 @@ export default function Header() {
   const pathName = usePathname();
 
   // state
-  const [loading, setLoading] = useState<boolean>(false);
 
   // atoms
   const [user, setUser] = useAtom(userAtom);
 
   // actions
   const getUser = async (userId: Id<"users">) => {
-    setLoading(true);
     const user = await convex.query(api.users.getUser, {
       id: userId,
     });
@@ -44,7 +41,6 @@ export default function Header() {
         picture: user.picture,
       });
     }
-    setLoading(false);
   };
 
   // effect
@@ -57,8 +53,6 @@ export default function Header() {
 
   return (
     <>
-      {loading && <Loader />}
-
       <nav
         className={`p-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 shadow-md backdrop-blur-xl ${pathName.includes("workspace") && "border-b"}`}
       >
