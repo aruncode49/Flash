@@ -4,7 +4,7 @@ import { useConvex, useMutation } from "convex/react";
 import { useParams } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { promptAtom, userAtom } from "@/lib/globalAtoms";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -14,6 +14,7 @@ import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { Loader } from "lucide-react";
 import { countToken } from "@/utils/countToken";
+import { toast } from "sonner";
 
 export default function ChatView() {
   // hooks
@@ -24,7 +25,7 @@ export default function ChatView() {
 
   // atoms
   const [promptMessage, setPromptMessage] = useAtom(promptAtom);
-  const user = useAtomValue(userAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   // state
   const [isGeneratingChat, setIsGeneratingChat] = useState<boolean>(false);
@@ -67,6 +68,13 @@ export default function ChatView() {
       const token =
         user?.token - countToken(JSON.stringify(response.data.data));
 
+      // update user object
+      setUser({
+        ...user,
+        token: token,
+      });
+
+      // update user token in db
       await onUpdateUserToken({
         token: token,
         userId: user.id as Id<"users">,
@@ -77,6 +85,8 @@ export default function ChatView() {
         messages: _promptMessage,
         workspaceId: id as Id<"workspace">,
       });
+    } else {
+      toast.error(response.data.errorMessage);
     }
 
     setIsGeneratingChat(false);

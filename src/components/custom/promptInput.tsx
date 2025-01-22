@@ -12,6 +12,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { usePathname, useRouter } from "next/navigation";
 import Loader from "./loader";
+import { toast } from "sonner";
 
 export default function PromptInput() {
   // hooks
@@ -41,7 +42,17 @@ export default function PromptInput() {
       return;
     }
 
-    if (!pathName.includes("workspace")) {
+    const isWorkspacePage = pathName.includes("workspace");
+
+    // check token availablity
+    if (user?.token > 100) {
+      toast.error(
+        "You don't have enough token to generate your response. Please upgrade your plan to get more tokens."
+      );
+      return;
+    }
+
+    if (!isWorkspacePage) {
       setLoading(true);
       const workspaceId = await onCreateWorkspace({
         messages: [

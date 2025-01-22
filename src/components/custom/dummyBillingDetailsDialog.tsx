@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import Link from "next/link";
 import { FaCopy } from "react-icons/fa";
+import { toast } from "sonner";
 
 interface IDummyBillingDetailsDialog {
   open: boolean;
@@ -37,6 +38,7 @@ export default function DummyBillingDetailsDialog({
   // actions
   const onCopy = async (val: string) => {
     await navigator.clipboard.writeText(val);
+    toast.success("Copied!");
   };
 
   return (

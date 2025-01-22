@@ -13,7 +13,7 @@ import {
 } from "@codesandbox/sandpack-react";
 import axios from "axios";
 import { useConvex, useMutation } from "convex/react";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { Loader } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../../convex/_generated/api";
@@ -21,6 +21,7 @@ import { useParams } from "next/navigation";
 import { Id } from "../../../convex/_generated/dataModel";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { countToken } from "@/utils/countToken";
+import { toast } from "sonner";
 
 interface ICodeView {
   isFullSize: boolean;
@@ -46,7 +47,7 @@ export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
 
   // atoms
   const promptMessage = useAtomValue(promptAtom);
-  const user = useAtomValue(userAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   // refs
   const isGenerating = useRef<boolean>(false);
@@ -90,14 +91,22 @@ export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
       // Get token length and update in user db
       const token = user?.token - countToken(JSON.stringify(responseData));
 
+      // update user object
+      setUser({
+        ...user,
+        token: token,
+      });
+
+      // update token in db
       await onUpdateUserToken({
         token: token,
         userId: user.id as Id<"users">,
       });
 
       setFiles(mergedFiles);
+      toast.success("Code generated successfully!");
     } else {
-      console.log(response.data.errorMessage);
+      toast.error(response.data.errorMessage);
     }
     isGenerating.current = false;
     setIsGeneratingCode(false);

@@ -12,6 +12,7 @@ import Loader from "@/components/custom/loader";
 import { TPlans } from "@/interfaces/user";
 import { Button } from "@/components/ui/button";
 import DummyBillingDetailsDialog from "@/components/custom/dummyBillingDetailsDialog";
+import { toast } from "sonner";
 
 export default function PricingPage() {
   // hooks
@@ -28,22 +29,30 @@ export default function PricingPage() {
   // actions
   const onPaymentSuccess = async (tokenValue: number, plan: TPlans) => {
     if (!user) return;
-    setLoading(true);
-    const token = user?.token + (plan === "Free" ? 0 : tokenValue);
-    await onUpdateUserToken({
-      userId: user.id as Id<"users">,
-      token: token,
-    });
-    await onUpdateUserPlan({
-      userId: user.id as Id<"users">,
-      activePlan: plan,
-    });
-    setUser({
-      ...user,
-      token: token,
-      activePlan: plan,
-    });
-    setLoading(false);
+    try {
+      setLoading(true);
+      const token = user?.token + (plan === "Free" ? 0 : tokenValue);
+      await onUpdateUserToken({
+        userId: user.id as Id<"users">,
+        token: token,
+      });
+      await onUpdateUserPlan({
+        userId: user.id as Id<"users">,
+        activePlan: plan,
+      });
+      setUser({
+        ...user,
+        token: token,
+        activePlan: plan,
+      });
+    } catch (error) {
+      toast.error(error instanceof Error && error.message);
+    } finally {
+      setLoading(false);
+      toast.success(
+        "Plan upgraded successfully! Your tokens has been added into your account."
+      );
+    }
   };
 
   return (

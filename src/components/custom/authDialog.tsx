@@ -20,6 +20,7 @@ import { IUser } from "@/interfaces/user";
 import axios from "axios";
 import { useState } from "react";
 import { Loader as LoaderIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface IAuthDialog {
   open: boolean;
@@ -65,9 +66,10 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
         });
         setLoading(false);
         onClose(); // close the dialog
+        toast.success("You are logged in successfully!");
       }
     },
-    onError: (errorResponse) => console.log(errorResponse.error_description),
+    onError: (errorResponse) => toast.error(errorResponse.error_description),
   });
 
   return (
