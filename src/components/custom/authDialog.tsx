@@ -18,6 +18,8 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { IUser } from "@/interfaces/user";
 import axios from "axios";
+import { useState } from "react";
+import { Loader as LoaderIcon } from "lucide-react";
 
 interface IAuthDialog {
   open: boolean;
@@ -27,6 +29,9 @@ interface IAuthDialog {
 export default function AuthDialog({ open, onClose }: IAuthDialog) {
   // hooks
   const onCreateUser = useMutation(api.users.createUser);
+
+  // state
+  const [loading, setLoading] = useState(false);
 
   // atoms state
   const setUser = useSetAtom(userAtom);
@@ -42,6 +47,7 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
 
   const onGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      setLoading(true);
       const userInfo = await getUserInfo(tokenResponse.access_token);
       if (userInfo && userInfo.data) {
         const data = userInfo.data as IUser;
@@ -57,6 +63,7 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
         Cookies.set(globalStringConstants.userId, userId, {
           expires: 7,
         });
+        setLoading(false);
         onClose(); // close the dialog
       }
     },
@@ -75,9 +82,16 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
             <p className="text-xs text-neutral-300">
               {globalStringConstants.authDescription}
             </p>
-            <Button onClick={() => onGoogleLogin()} size="sm" className="mt-5">
-              <FcGoogle />
-              {globalStringConstants.signInWithGoogle}
+            <Button
+              disabled={loading}
+              onClick={() => onGoogleLogin()}
+              size="sm"
+              className="mt-5"
+            >
+              {loading ? <LoaderIcon className="animate-spin" /> : <FcGoogle />}
+              {loading
+                ? "Please wait..."
+                : globalStringConstants.signInWithGoogle}
             </Button>
             <p className="text-xs text-neutral-400 ">
               {globalStringConstants.authFooter}

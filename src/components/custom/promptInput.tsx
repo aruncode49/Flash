@@ -5,8 +5,8 @@ import { Button } from "../ui/button";
 import { Loader as LoaderIcon, MoveRight } from "lucide-react";
 import { BsStars } from "react-icons/bs";
 import { FormEvent, useEffect, useState } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
-import { promptAtom, userAtom } from "@/lib/globalAtoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { authDialogAtom, promptAtom, userAtom } from "@/lib/globalAtoms";
 import AuthDialog from "./authDialog";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -21,12 +21,12 @@ export default function PromptInput() {
 
   // state
   const [prompt, setPrompt] = useState<string>("");
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   // atoms
   const setPromptMessage = useSetAtom(promptAtom);
   const user = useAtomValue(userAtom);
+  const [isAuthDialogOpen, setAuthDialogOpen] = useAtom(authDialogAtom);
 
   // actions
   const onGenerateResult = async (
@@ -37,7 +37,7 @@ export default function PromptInput() {
 
     // open auth dialog if the user is not authenticated
     if (!user) {
-      setIsDialogOpen(true);
+      setAuthDialogOpen(true);
       return;
     }
 
@@ -133,7 +133,10 @@ export default function PromptInput() {
       )}
 
       {/* Auth Dialog */}
-      <AuthDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
+      <AuthDialog
+        open={isAuthDialogOpen}
+        onClose={() => setAuthDialogOpen(false)}
+      />
 
       {/* Suggestion Loader */}
       {prompt === "" && loading && <Loader />}

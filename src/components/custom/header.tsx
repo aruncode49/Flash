@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { Button } from "../ui/button";
 import { Racing_Sans_One } from "next/font/google";
 import Cookies from "js-cookie";
-import { useAtom } from "jotai";
-import { userAtom } from "@/lib/globalAtoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { authDialogAtom, promptAtom, userAtom } from "@/lib/globalAtoms";
 import { globalStringConstants } from "@/constants/globalStringConstants";
 import { useConvex } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -27,6 +27,8 @@ export default function Header() {
 
   // atoms
   const [user, setUser] = useAtom(userAtom);
+  const promptMessage = useAtomValue(promptAtom);
+  const setAuthDialogOpen = useSetAtom(authDialogAtom);
 
   // actions
   const getUser = async (userId: Id<"users">) => {
@@ -56,18 +58,35 @@ export default function Header() {
       <nav
         className={`p-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 shadow-md backdrop-blur-xl ${pathName.includes("workspace") && "border-b"}`}
       >
-        <Link href="/">
+        <Link href="/" className="z-50">
           <h1 className={`${logoFont.className} text-xl text-white`}>
             Flash⚡
           </h1>
         </Link>
 
-        {/* Get Started Button (Open SignIn Dialog) */}
-        {!user && <Button variant="secondary">Get Started</Button>}
+        {pathName.includes("workspace") && (
+          <p
+            title={promptMessage[0]?.message}
+            className="text-sm capitalize z-50 max-w-[18rem] line-clamp-1"
+          >
+            {promptMessage[0]?.message}
+          </p>
+        )}
 
-        {/* Export & Deploy Button */}
-        {/* Export */}
-        {/* Deploy */}
+        {!user ? (
+          <Button onClick={() => setAuthDialogOpen(true)} variant="secondary">
+            Get Started
+          </Button>
+        ) : (
+          pathName.includes("workspace") && (
+            <div className="flex items-center gap-2">
+              <Button variant="secondary">Export</Button>
+              <Button className="bg-amber-700 hover:bg-amber-600">
+                Deploy
+              </Button>
+            </div>
+          )
+        )}
 
         {/* Lighting effect */}
         <div className="absolute top-0 left-0 right-0 bg-gradient-to-r h-28 from-sky-600 to-transparent opacity-50 blur-3xl pointer-events-none" />

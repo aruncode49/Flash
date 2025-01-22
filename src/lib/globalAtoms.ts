@@ -5,3 +5,5 @@ import { atom } from "jotai";
 export const userAtom = atom<IUser | null>(null);
 
 export const promptAtom = atom<IPromptMessage[]>([]);
+
+export const authDialogAtom = atom<boolean>(false);

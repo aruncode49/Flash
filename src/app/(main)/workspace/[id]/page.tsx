@@ -14,7 +14,7 @@ export default function WorkspacePage() {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-7 py-3 h-full min-w-[900px] overflow-x-auto">
+    <div className="grid grid-cols-3 gap-5 py-3 h-full min-w-[900px] overflow-x-auto">
       <div className={`${isFullSize && "hidden"} col-span-1`}>
         <ChatView />
       </div>
