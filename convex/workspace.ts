@@ -48,3 +48,17 @@ export const updateWorkspaceCode = mutation({
     });
   },
 });
+
+export const getAllWorkspaces = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const workspaces = await ctx.db
+      .query("workspace")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .collect();
+
+    return workspaces || [];
+  },
+});

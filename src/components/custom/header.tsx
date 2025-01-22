@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { Button } from "../ui/button";
-import { Racing_Sans_One } from "next/font/google";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { authDialogAtom, promptAtom, userAtom } from "@/lib/globalAtoms";
@@ -12,11 +11,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const logoFont = Racing_Sans_One({
-  subsets: ["latin"],
-  weight: "400",
-});
+import Logo from "./logo";
 
 export default function Header() {
   // hooks
@@ -58,11 +53,7 @@ export default function Header() {
       <nav
         className={`p-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 shadow-md backdrop-blur-xl ${pathName.includes("workspace") && "border-b"}`}
       >
-        <Link href="/" className="z-50">
-          <h1 className={`${logoFont.className} text-xl text-white`}>
-            Flash⚡
-          </h1>
-        </Link>
+        <Logo />
 
         {pathName.includes("workspace") && (
           <p
