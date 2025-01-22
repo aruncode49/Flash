@@ -55,3 +55,15 @@ export const updateUserToken = mutation({
     });
   },
 });
+
+export const updateUserPlan = mutation({
+  args: {
+    userId: v.id("users"),
+    activePlan: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.userId, {
+      activePlan: args.activePlan,
+    });
+  },
+});
