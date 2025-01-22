@@ -25,14 +25,14 @@ export default function WorkspacePage() {
 
   return (
     <div className="grid grid-cols-3 gap-5 py-3 h-full min-w-[900px] overflow-x-auto">
-      <div className={`${isFullSize && "hidden"} col-span-1 flex gap-3`}>
-        <div className="flex items-end">
+      <div className={`${isFullSize && "hidden"} col-span-1 flex gap-2`}>
+        <div className="flex items-end min-w-[1.5rem] max-w-[1.5rem]">
           {user && user?.picture && (
             <Image
               src={user.picture}
               alt="User Image"
-              width={100}
-              height={100}
+              width={30}
+              height={30}
               title="User Profile"
               className="rounded-full cursor-pointer hover:opacity-80"
               onClick={toggleSidebar}

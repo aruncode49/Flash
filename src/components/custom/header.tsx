@@ -36,6 +36,7 @@ export default function Header() {
         email: user.email,
         name: user.name,
         picture: user.picture,
+        token: user.token ?? 0,
       });
     }
   };

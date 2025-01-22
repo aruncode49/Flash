@@ -13,12 +13,14 @@ import prompt from "@/constants/prompt";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { Loader } from "lucide-react";
+import { countToken } from "@/utils/countToken";
 
 export default function ChatView() {
   // hooks
   const { id } = useParams();
   const convex = useConvex();
   const onUpdateWorkspaceChat = useMutation(api.workspace.updateWorkspace);
+  const onUpdateUserToken = useMutation(api.users.updateUserToken);
 
   // atoms
   const [promptMessage, setPromptMessage] = useAtom(promptAtom);
@@ -52,7 +54,7 @@ export default function ChatView() {
     const response = await axios.post("/api/ai-chat", {
       prompt: _prompt,
     });
-    if (response.data.success && id) {
+    if (response.data.success && id && user) {
       const _promptMessage = promptMessage
         .map((item) => {
           return { ...item };
@@ -61,6 +63,16 @@ export default function ChatView() {
 
       setPromptMessage(_promptMessage);
 
+      // Get token length and update in user db
+      const token =
+        user?.token - countToken(JSON.stringify(response.data.data));
+
+      await onUpdateUserToken({
+        token: token,
+        userId: user.id as Id<"users">,
+      });
+
+      // update workspace chat
       await onUpdateWorkspaceChat({
         messages: _promptMessage,
         workspaceId: id as Id<"workspace">,
@@ -89,7 +101,7 @@ export default function ChatView() {
   }, [promptMessage]); // Only run when promptMessage changes
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-5rem)]">
+    <div className="flex flex-col h-full w-full max-h-[calc(100vh-5rem)]">
       <div
         className="flex-1 overflow-y-scroll scrollbar-hide rounded-sm"
         style={{

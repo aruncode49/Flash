@@ -3,7 +3,7 @@
 import React from "react";
 import { codeEditorData } from "@/constants/codeEditor";
 import prompt from "@/constants/prompt";
-import { promptAtom } from "@/lib/globalAtoms";
+import { promptAtom, userAtom } from "@/lib/globalAtoms";
 import {
   SandpackProvider,
   SandpackLayout,
@@ -20,6 +20,7 @@ import { api } from "../../../convex/_generated/api";
 import { useParams } from "next/navigation";
 import { Id } from "../../../convex/_generated/dataModel";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { countToken } from "@/utils/countToken";
 
 interface ICodeView {
   isFullSize: boolean;
@@ -32,6 +33,7 @@ const activeTabClasses = "bg-blue-500/30 text-blue-500";
 export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
   // hooks
   const onUpdateWorkspaceCode = useMutation(api.workspace.updateWorkspaceCode);
+  const onUpdateUserToken = useMutation(api.users.updateUserToken);
   const convex = useConvex();
   const { id } = useParams();
 
@@ -44,6 +46,7 @@ export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
 
   // atoms
   const promptMessage = useAtomValue(promptAtom);
+  const user = useAtomValue(userAtom);
 
   // refs
   const isGenerating = useRef<boolean>(false);
@@ -73,7 +76,7 @@ export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
       prompt: userPrompt,
     });
 
-    if (response.data.success && id) {
+    if (response.data.success && id && user) {
       const responseData = response.data.data;
       const mergedFiles = {
         ...codeEditorData.defaultFiles,
@@ -83,6 +86,15 @@ export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
         workspaceId: id as Id<"workspace">,
         files: responseData,
       });
+
+      // Get token length and update in user db
+      const token = user?.token - countToken(JSON.stringify(responseData));
+
+      await onUpdateUserToken({
+        token: token,
+        userId: user.id as Id<"users">,
+      });
+
       setFiles(mergedFiles);
     } else {
       console.log(response.data.errorMessage);
