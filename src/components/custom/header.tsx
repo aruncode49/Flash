@@ -12,11 +12,15 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { usePathname } from "next/navigation";
 import Logo from "./logo";
 import { TPlans } from "@/interfaces/user";
+import { LuDownload, LuRocket } from "react-icons/lu";
+import Image from "next/image";
+import { useSidebar } from "../ui/sidebar";
 
 export default function Header() {
   // hooks
   const convex = useConvex();
   const pathName = usePathname();
+  const { toggleSidebar } = useSidebar();
 
   // state
 
@@ -65,7 +69,7 @@ export default function Header() {
         {pathName.includes("workspace") && (
           <p
             title={promptMessage[0]?.message}
-            className="text-xs capitalize z-50 max-w-[18rem] line-clamp-1"
+            className="text-xs capitalize z-50 max-w-[18rem] ml-14 line-clamp-1"
           >
             {promptMessage[0]?.message}
           </p>
@@ -76,14 +80,32 @@ export default function Header() {
             Get Started
           </Button>
         ) : (
-          pathName.includes("workspace") && (
-            <div className="flex items-center gap-2">
-              <Button variant="secondary">Export</Button>
-              <Button className="bg-amber-700 hover:bg-amber-600">
-                Deploy
-              </Button>
-            </div>
-          )
+          <div className="flex items-center gap-2">
+            {pathName.includes("workspace") && (
+              <div className="flex items-center gap-2">
+                <Button variant="secondary">
+                  <LuDownload />
+                  Export
+                </Button>
+                <Button className="bg-amber-700 hover:bg-amber-600">
+                  <LuRocket />
+                  Deploy
+                </Button>
+              </div>
+            )}
+
+            {user && user?.picture && (
+              <Image
+                src={user.picture}
+                alt="User Image"
+                width={30}
+                height={30}
+                title="User Profile"
+                className="rounded-full cursor-pointer hover:opacity-80"
+                onClick={toggleSidebar}
+              />
+            )}
+          </div>
         )}
 
         {/* Lighting effect */}

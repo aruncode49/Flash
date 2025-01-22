@@ -33,8 +33,8 @@ export default function RootLayout({
           <PaypalProvider>
             <body className={`${interFont.className} antialiased px-3 pl-2`}>
               <ThemeProvider attribute="class" defaultTheme="dark">
-                <Header />
                 <SidebarProvider defaultOpen={false}>
+                  <Header />
                   <AppSidebar />
                   <main className="h-[calc(100vh-3.5rem)] mt-14 w-full">
                     {children}

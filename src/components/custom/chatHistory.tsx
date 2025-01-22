@@ -9,10 +9,14 @@ import { userAtom } from "@/lib/globalAtoms";
 import { Id } from "../../../convex/_generated/dataModel";
 import { FaTrashAlt } from "react-icons/fa";
 import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useSidebar } from "../ui/sidebar";
 
 export default function ChatHistory() {
   // hooks
   const convex = useConvex();
+  const router = useRouter();
+  const { toggleSidebar } = useSidebar();
 
   // atoms
   const user = useAtomValue(userAtom);
@@ -33,6 +37,11 @@ export default function ChatHistory() {
     setLoading(false);
   };
 
+  const onNavigateToWorkspace = (id: string) => {
+    router.push(`/workspace/${id}`);
+    toggleSidebar();
+  };
+
   // effects
   useEffect(() => {
     if (user?.id) {
@@ -49,6 +58,7 @@ export default function ChatHistory() {
         <div className="mt-3 flex flex-col gap-1">
           {allWorkspaces.map((workspace, index) => (
             <div
+              onClick={() => onNavigateToWorkspace(workspace._id)}
               className="text-xs p-1 px-2 text-neutral-300 rounded-sm hover:bg-neutral-800 hover:text-white cursor-pointer flex items-center justify-between gap-1"
               key={index}
               title={workspace.messages[0].message}

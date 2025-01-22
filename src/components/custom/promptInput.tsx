@@ -109,6 +109,7 @@ export default function PromptInput() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={onKeyPress}
+              autoFocus={true}
             />
             {prompt !== "" && (
               <Button
