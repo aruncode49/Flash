@@ -22,6 +22,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { countToken } from "@/utils/countToken";
 import { toast } from "sonner";
+import SandpackPreviewClient from "./sandpackPreviewClient";
 
 interface ICodeView {
   isFullSize: boolean;
@@ -198,19 +199,18 @@ export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
             }}
           />
           <SandpackCodeEditor
+            closableTabs
+            showRunButton
             style={{
               height: "calc(100vh - 7.5rem)",
               display: activeTab === "preview" ? "none" : "flex",
             }}
           />
 
-          <SandpackPreview
-            style={{
-              height: "calc(100vh - 7.5rem)",
-              display: activeTab === "code" ? "none" : "flex",
-            }}
-            showNavigator
-          />
+          {/* Sandpack Preview Client */}
+          <div className={`${activeTab === "code" ? "hidden" : "flex"} w-full`}>
+            <SandpackPreviewClient />
+          </div>
         </SandpackLayout>
       </SandpackProvider>
     </div>

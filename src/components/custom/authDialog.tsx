@@ -14,9 +14,9 @@ import { FcGoogle } from "react-icons/fc";
 import { useSetAtom } from "jotai";
 import { userAtom } from "@/lib/globalAtoms";
 import Cookies from "js-cookie";
-import { useMutation } from "convex/react";
+import { useConvex, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { IUser } from "@/interfaces/user";
+import { IUser, TPlans } from "@/interfaces/user";
 import axios from "axios";
 import { useState } from "react";
 import { Loader as LoaderIcon } from "lucide-react";
@@ -30,6 +30,7 @@ interface IAuthDialog {
 export default function AuthDialog({ open, onClose }: IAuthDialog) {
   // hooks
   const onCreateUser = useMutation(api.users.createUser);
+  const convex = useConvex();
 
   // state
   const [loading, setLoading] = useState(false);
@@ -60,7 +61,22 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
           picture: data.picture,
         });
 
-        setUser({ ...data, id: userId });
+        // get user and set atom
+        const user = await convex.query(api.users.getUser, {
+          id: userId,
+        });
+
+        if (user) {
+          setUser({
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            picture: user.picture,
+            token: user.token ?? 0,
+            activePlan: user.activePlan as TPlans,
+          });
+        }
+
         Cookies.set(globalStringConstants.userId, userId, {
           expires: 7,
         });

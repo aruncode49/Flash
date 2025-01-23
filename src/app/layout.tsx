@@ -9,6 +9,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/custom/appSidebar";
 import PaypalProvider from "@/lib/paypalProvider";
 import { Toaster } from "@/components/ui/sonner";
+import Footer from "@/components/custom/footer";
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
                   <main className="h-[calc(100vh-3.5rem)] mt-14 w-full">
                     {children}
                   </main>
+                  <Footer />
                   <Toaster richColors />
                 </SidebarProvider>
               </ThemeProvider>

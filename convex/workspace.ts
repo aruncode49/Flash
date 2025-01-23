@@ -62,3 +62,12 @@ export const getAllWorkspaces = query({
     return workspaces || [];
   },
 });
+
+export const deleteWorkspaceChat = mutation({
+  args: {
+    id: v.id("workspace"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+  },
+});

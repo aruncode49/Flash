@@ -1,7 +1,7 @@
 "use client";
 
 import { IWorkspaces } from "@/interfaces/workspaces";
-import { useConvex } from "convex/react";
+import { useConvex, useMutation } from "convex/react";
 import { useEffect, useState } from "react";
 import { api } from "../../../convex/_generated/api";
 import { useAtomValue } from "jotai";
@@ -11,12 +11,20 @@ import { FaTrashAlt } from "react-icons/fa";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSidebar } from "../ui/sidebar";
+import DeleteChatDialog from "./deleteChatDialog";
+import { toast } from "sonner";
+
+type TChatData = {
+  id: Id<"workspace">;
+  name: string;
+};
 
 export default function ChatHistory() {
   // hooks
   const convex = useConvex();
   const router = useRouter();
   const { toggleSidebar } = useSidebar();
+  const onDeleteWorkspaceChat = useMutation(api.workspace.deleteWorkspaceChat);
 
   // atoms
   const user = useAtomValue(userAtom);
@@ -24,6 +32,9 @@ export default function ChatHistory() {
   // states
   const [allWorkspaces, setAllWorkspaces] = useState<IWorkspaces[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [chatData, setChatData] = useState<TChatData | undefined>(undefined);
+  const [chatDeleting, setChatDeleting] = useState(false);
 
   // actions
   const onFetchAllWorkspaces = async () => {
@@ -35,6 +46,26 @@ export default function ChatHistory() {
       setAllWorkspaces(workspaces as IWorkspaces[]);
     }
     setLoading(false);
+  };
+
+  const onDeleteWorkspace = async (id: Id<"workspace"> | undefined) => {
+    if (!id) return;
+    setChatDeleting(true);
+    await onDeleteWorkspaceChat({ id });
+
+    // update all workspace locally
+    setAllWorkspaces((prev) =>
+      prev.filter((workspace) => workspace._id !== id)
+    );
+    setChatDeleting(false);
+    toast.success("Chat deleted successfully!");
+    toggleSidebar();
+    router.push("/");
+  };
+
+  const onClickDeleteChat = (data: TChatData) => {
+    setChatData(data);
+    setDialogOpen(true);
   };
 
   const onNavigateToWorkspace = (id: string) => {
@@ -58,16 +89,31 @@ export default function ChatHistory() {
         <div className="mt-3 flex flex-col gap-1">
           {allWorkspaces.map((workspace, index) => (
             <div
-              onClick={() => onNavigateToWorkspace(workspace._id)}
-              className="text-xs p-1 px-2 text-neutral-300 rounded-sm hover:bg-neutral-800 hover:text-white cursor-pointer flex items-center justify-between gap-1"
+              className="text-xs py-1 px-2 text-neutral-300 rounded-sm hover:bg-neutral-800 hover:text-white cursor-pointer flex items-center justify-between gap-1"
               key={index}
               title={workspace.messages[0].message}
             >
-              <p className="line-clamp-1 capitalize">
+              <p
+                onClick={() => onNavigateToWorkspace(workspace._id)}
+                className="line-clamp-1 capitalize w-full"
+              >
                 {`${index + 1}. `} {workspace.messages[0].message}
               </p>
-              <span title="Delete">
-                <FaTrashAlt className="hover:text-red-500 hover:scale-110" />
+              <span
+                onClick={() =>
+                  onClickDeleteChat({
+                    id: workspace._id,
+                    name: workspace.messages[0].message,
+                  })
+                }
+                className="p-1 hover:text-red-500"
+                title="Delete"
+              >
+                {chatDeleting && workspace._id === chatData?.id ? (
+                  <Loader className="animate-spin size-3" />
+                ) : (
+                  <FaTrashAlt />
+                )}
               </span>
             </div>
           ))}
@@ -77,6 +123,14 @@ export default function ChatHistory() {
           No Chat Found!
         </p>
       )}
+
+      {/* Delete Chat Dialog */}
+      <DeleteChatDialog
+        open={isDialogOpen}
+        onClose={() => setDialogOpen(false)}
+        chatName={chatData?.name}
+        onDelete={() => onDeleteWorkspace(chatData?.id)}
+      />
     </div>
   );
 }

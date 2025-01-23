@@ -4,33 +4,46 @@ import { useEffect } from "react";
 import { Button } from "../ui/button";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { authDialogAtom, promptAtom, userAtom } from "@/lib/globalAtoms";
+import {
+  authDialogAtom,
+  promptAtom,
+  sandboxActions,
+  userAtom,
+} from "@/lib/globalAtoms";
 import { globalStringConstants } from "@/constants/globalStringConstants";
 import { useConvex } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Logo from "./logo";
 import { TPlans } from "@/interfaces/user";
 import { LuDownload, LuRocket } from "react-icons/lu";
 import Image from "next/image";
 import { useSidebar } from "../ui/sidebar";
+import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
+import { useRef } from "react";
 
 export default function Header() {
   // hooks
   const convex = useConvex();
   const pathName = usePathname();
   const { toggleSidebar } = useSidebar();
+  const router = useRouter();
 
   // state
+
+  // refs
+  const loadingRef = useRef<LoadingBarRef>(null);
 
   // atoms
   const [user, setUser] = useAtom(userAtom);
   const promptMessage = useAtomValue(promptAtom);
   const setAuthDialogOpen = useSetAtom(authDialogAtom);
+  const setSandboxAction = useSetAtom(sandboxActions);
 
   // actions
   const getUser = async (userId: Id<"users">) => {
+    loadingRef.current?.continuousStart();
     const user = await convex.query(api.users.getUser, {
       id: userId,
     });
@@ -44,6 +57,14 @@ export default function Header() {
         activePlan: user.activePlan as TPlans,
       });
     }
+    loadingRef.current?.complete();
+  };
+
+  const onSetSandboxAction = (type: "deploy" | "export") => {
+    setSandboxAction({
+      type,
+      timestamp: Date.now().toString(),
+    });
   };
 
   // effect
@@ -51,16 +72,14 @@ export default function Header() {
     const userId = Cookies.get(globalStringConstants.userId);
     if (!user && userId) {
       getUser(userId as Id<"users">);
+    } else {
+      router.push("/");
     }
   }, []);
 
-  // early return from pricing page
-  if (pathName.includes("pricing")) {
-    return null;
-  }
-
   return (
     <>
+      <LoadingBar color="#22c55e" ref={loadingRef} shadow={true} />
       <nav
         className={`p-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 shadow-md backdrop-blur-xl ${pathName.includes("workspace") && "border-b"}`}
       >
@@ -83,18 +102,24 @@ export default function Header() {
           <div className="flex items-center gap-2">
             {pathName.includes("workspace") && (
               <div className="flex items-center gap-2">
-                <Button variant="secondary">
+                <Button
+                  onClick={() => onSetSandboxAction("export")}
+                  variant="secondary"
+                >
                   <LuDownload />
                   Export
                 </Button>
-                <Button className="bg-amber-700 hover:bg-amber-600">
+                <Button
+                  onClick={() => onSetSandboxAction("deploy")}
+                  className="bg-amber-700 hover:bg-amber-600"
+                >
                   <LuRocket />
                   Deploy
                 </Button>
               </div>
             )}
 
-            {user && user?.picture && (
+            {!pathName.includes("pricing") && user && user?.picture && (
               <Image
                 src={user.picture}
                 alt="User Image"
