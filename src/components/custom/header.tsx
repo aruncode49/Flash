@@ -88,7 +88,7 @@ export default function Header() {
         {pathName.includes("workspace") && (
           <p
             title={promptMessage[0]?.message}
-            className="text-xs capitalize z-50 max-w-[18rem] ml-14 line-clamp-1"
+            className="text-xs capitalize z-50 max-w-[18rem] ml-14 line-clamp-1 hidden md:block"
           >
             {promptMessage[0]?.message}
           </p>

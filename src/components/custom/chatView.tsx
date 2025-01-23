@@ -111,7 +111,7 @@ export default function ChatView() {
   }, [promptMessage]); // Only run when promptMessage changes
 
   return (
-    <div className="flex flex-col h-full w-full max-h-[calc(100vh-5rem)]">
+    <div className="flex flex-col h-full max-h-[calc(100vh-5rem)] w-full">
       <div
         className="flex-1 overflow-y-scroll scrollbar-hide rounded-sm"
         style={{

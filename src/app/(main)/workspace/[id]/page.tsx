@@ -24,8 +24,10 @@ export default function WorkspacePage() {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-5 py-3 h-full min-w-[900px] overflow-x-auto">
-      <div className={`${isFullSize && "hidden"} col-span-1 flex gap-2`}>
+    <div className="flex w-full gap-5 py-3 h-full overflow-x-auto">
+      <div
+        className={`${isFullSize && "hidden"} flex gap-2 basis-1/3 min-w-[20rem]`}
+      >
         <div className="flex items-end min-w-[1.5rem] max-w-[1.5rem]">
           {user && user?.picture && (
             <Image
@@ -41,7 +43,7 @@ export default function WorkspacePage() {
         </div>
         <ChatView />
       </div>
-      <div className="col-span-2">
+      <div className="max-w-[65%] min-w-[50rem]">
         <CodeView isFullSize={isFullSize} onChangeFullSize={onChangeFullSize} />
       </div>
     </div>
