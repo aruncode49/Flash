@@ -16,7 +16,7 @@ const interFont = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Flash",
+  title: "Flash AI",
   description: "Build what you want.",
 };
 

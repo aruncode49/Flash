@@ -199,7 +199,7 @@ export default function CodeView({ isFullSize, onChangeFullSize }: ICodeView) {
           />
           <SandpackCodeEditor
             closableTabs
-            showRunButton
+            showRunButton={true}
             style={{
               height: "calc(100vh - 7.5rem)",
               display: activeTab === "preview" ? "none" : "flex",

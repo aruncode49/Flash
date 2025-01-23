@@ -26,7 +26,7 @@ export default function WorkspacePage() {
   return (
     <div className="flex w-full gap-5 py-3 h-full overflow-x-auto">
       <div
-        className={`${isFullSize && "hidden"} flex gap-2 basis-1/3 min-w-[20rem]`}
+        className={`${isFullSize && "hidden"} flex gap-2 basis-1/3 min-w-[25rem]`}
       >
         <div className="md:flex items-end min-w-[1.5rem] max-w-[1.5rem] hidden">
           {user && user?.picture && (
@@ -43,7 +43,7 @@ export default function WorkspacePage() {
         </div>
         <ChatView />
       </div>
-      <div className="max-w-[65%] min-w-[50rem]">
+      <div className="w-full min-w-[50rem]">
         <CodeView isFullSize={isFullSize} onChangeFullSize={onChangeFullSize} />
       </div>
     </div>
