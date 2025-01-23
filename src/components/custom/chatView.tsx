@@ -9,7 +9,7 @@ import { promptAtom, userAtom } from "@/lib/globalAtoms";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import PromptInput from "./promptInput";
-import prompt from "@/constants/prompt";
+import { prompt } from "@/constants/prompt";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { Loader } from "lucide-react";

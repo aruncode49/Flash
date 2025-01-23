@@ -1,6 +1,6 @@
 import dedent from "dedent";
 
-export default {
+export const prompt = {
   chatPrompt: dedent`
   'You are a AI Assistant and experience in React Development.
   GUIDELINES:

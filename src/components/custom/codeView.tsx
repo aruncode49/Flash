@@ -2,14 +2,13 @@
 
 import React from "react";
 import { codeEditorData } from "@/constants/codeEditor";
-import prompt from "@/constants/prompt";
+import { prompt } from "@/constants/prompt";
 import { promptAtom, userAtom } from "@/lib/globalAtoms";
 import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
   SandpackFileExplorer,
-  SandpackPreview,
 } from "@codesandbox/sandpack-react";
 import axios from "axios";
 import { useConvex, useMutation } from "convex/react";
