@@ -104,7 +104,7 @@ export default function PromptInput() {
         >
           <div className="flex h-[70%] gap-2">
             <textarea
-              className="w-full outline-none bg-transparent resize-none text-xs font-normal"
+              className="w-full outline-none bg-transparent resize-none text-sm font-normal"
               placeholder={globalStringConstants.promptInputPlaceholder}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -131,7 +131,7 @@ export default function PromptInput() {
       </div>
 
       {!pathName.includes("workspace") && (
-        <div className="mt-8 flex flex-wrap text-[12px] max-w-xl mx-auto justify-center gap-x-4 gap-y-2">
+        <div className="mt-8 flex flex-wrap text-sm max-w-xl mx-auto justify-center gap-x-4 gap-y-2">
           {globalStringConstants.promptSuggestions.map((value, index) => (
             <div
               onClick={() => onGenerateResult(new MouseEvent("click"), value)}

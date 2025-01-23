@@ -103,7 +103,6 @@ export default function AuthDialog({ open, onClose }: IAuthDialog) {
             <Button
               disabled={loading}
               onClick={() => onGoogleLogin()}
-              size="sm"
               className="mt-5"
             >
               {loading ? <LoaderIcon className="animate-spin" /> : <FcGoogle />}

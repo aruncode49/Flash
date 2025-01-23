@@ -9,7 +9,7 @@ const logoFont = Racing_Sans_One({
 export default function Logo() {
   return (
     <Link href="/" className="z-50">
-      <h1 className={`${logoFont.className} text-xl text-white`}>Flash⚡</h1>
+      <h1 className={`${logoFont.className} text-2xl text-white`}>Flash⚡</h1>
     </Link>
   );
 }

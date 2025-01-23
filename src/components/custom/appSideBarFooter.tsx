@@ -51,7 +51,7 @@ export default function AppSideBarFooter() {
     <div className="px-1 flex flex-col gap-2 pt-3">
       {footerData.map((item) => (
         <div
-          className="text-xs flex items-center gap-2 p-2 px-3 rounded-sm bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white cursor-pointer"
+          className="text-sm flex items-center gap-2 p-2 px-3 rounded-sm bg-neutral-800 hover:bg-neutral-700 text-neutral-300 hover:text-white cursor-pointer"
           key={item.id}
           onClick={item.onClick}
         >

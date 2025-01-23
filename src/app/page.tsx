@@ -10,15 +10,15 @@ export default function Home() {
         <Link
           href="https://www.linkedin.com/in/aruncode49/"
           target="_blank"
-          className="absolute -top-12 z-50 text-[9px] text-center border border-neutral-700 px-3 py-1 rounded-full flex items-center gap-2 text-neutral-300 hover:text-white"
+          className="absolute -top-12 z-50 text-xs text-center border border-neutral-700 px-3 py-1 rounded-full flex items-center gap-2 text-neutral-300 hover:text-white"
         >
-          <FaLinkedin className="size-3" />
+          <FaLinkedin className="size-4" />
           Introducing Flash: Developed by Arun Kumar
         </Link>
-        <h1 className="text-3xl sm:text-4xl font-bold px-10">
+        <h1 className="text-4xl sm:text-5xl font-bold px-10">
           {globalStringConstants.heroTitle}
         </h1>
-        <p className="mt-3 text-neutral-400 text-sm">
+        <p className="mt-3 text-neutral-400">
           {globalStringConstants.heroDescription}
         </p>
         <div className="mt-8">

@@ -126,7 +126,7 @@ export default function Header() {
                 width={30}
                 height={30}
                 title="User Profile"
-                className="rounded-full cursor-pointer hover:opacity-80"
+                className="rounded-full cursor-pointer hover:opacity-80 w-[2.3rem]"
                 onClick={toggleSidebar}
               />
             )}

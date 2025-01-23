@@ -98,7 +98,7 @@ export default function ChatHistory() {
         <div className="mt-3 flex flex-col gap-1">
           {allWorkspaces.map((workspace, index) => (
             <div
-              className="text-xs py-1 px-2 text-neutral-300 rounded-sm hover:bg-neutral-800 hover:text-white cursor-pointer flex items-center justify-between gap-1"
+              className="text-sm py-1 px-2 text-neutral-300 rounded-sm hover:bg-neutral-800 hover:text-white cursor-pointer flex items-center justify-between gap-1"
               key={index}
               title={workspace.messages[0].message}
             >

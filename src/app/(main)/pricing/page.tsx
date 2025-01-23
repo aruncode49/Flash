@@ -61,8 +61,8 @@ export default function PricingPage() {
   return (
     <div className="flex flex-col justify-center items-center pb-10">
       {loading && <Loader />}
-      <h1 className="text-3xl font-bold">Pricing⚡</h1>
-      <p className="text-sm mt-4 max-w-screen-sm text-center text-neutral-300">
+      <h1 className="text-3xl sm:text-4xl font-bold">Pricing⚡</h1>
+      <p className="text-base mt-4 max-w-screen-sm text-center text-neutral-300">
         {pricingConstants.description}
       </p>
 
@@ -85,13 +85,13 @@ export default function PricingPage() {
             key={index}
           >
             <h2 className="font-bold text-xl">{plan.name}</h2>
-            <p className="text-sm font-semibold">{plan.tokens} Tokens</p>
-            <p className="text-xs text-neutral-400">{plan.desc}</p>
+            <p className="text-base font-semibold">{plan.tokens} Tokens</p>
+            <p className="text-sm text-neutral-400">{plan.desc}</p>
             <h1 className="text-lg font-bold text-center">${plan.price}</h1>
 
             {plan.name === user?.activePlan ? (
               // Render a message for the current plan
-              <Button className="hover:bg-neutral-800 cursor-default text-green-400">
+              <Button className="hover:bg-neutral-800 py-2 cursor-default text-green-400">
                 Active Plan
               </Button>
             ) : plan.name === "Free" ? (
@@ -127,6 +127,7 @@ export default function PricingPage() {
                 style={{
                   layout: "horizontal",
                   tagline: false,
+                  height: 34,
                 }}
               />
             )}

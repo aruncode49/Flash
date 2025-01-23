@@ -28,7 +28,7 @@ export default function WorkspacePage() {
       <div
         className={`${isFullSize && "hidden"} flex gap-2 basis-1/3 min-w-[20rem]`}
       >
-        <div className="flex items-end min-w-[1.5rem] max-w-[1.5rem]">
+        <div className="md:flex items-end min-w-[1.5rem] max-w-[1.5rem] hidden">
           {user && user?.picture && (
             <Image
               src={user.picture}

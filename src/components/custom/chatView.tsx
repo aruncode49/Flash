@@ -121,7 +121,7 @@ export default function ChatView() {
         {promptMessage.map((message, index) => (
           <div
             key={index}
-            className="px-3 py-2 bg-neutral-700 mb-2 rounded-sm flex items-start gap-2 text-xs font-normal"
+            className="px-3 py-2 bg-neutral-700 mb-2 rounded-sm flex items-start gap-2 text-sm font-normal"
           >
             {message.role === "user" && user?.picture && (
               <Image
@@ -132,7 +132,7 @@ export default function ChatView() {
                 className="rounded-full"
               />
             )}
-            <ReactMarkdown className="leading-4">{`${message.role === "ai" ? "⚡" : ""}${message.message}`}</ReactMarkdown>
+            <ReactMarkdown className="leading-5">{`${message.role === "ai" ? "⚡" : ""}${message.message}`}</ReactMarkdown>
           </div>
         ))}
 
