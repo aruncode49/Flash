@@ -9,7 +9,7 @@ import { userAtom } from "@/lib/globalAtoms";
 import { Id } from "../../../convex/_generated/dataModel";
 import { FaTrashAlt } from "react-icons/fa";
 import { Loader } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useSidebar } from "../ui/sidebar";
 import DeleteChatDialog from "./deleteChatDialog";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ export default function ChatHistory() {
   const router = useRouter();
   const { toggleSidebar } = useSidebar();
   const onDeleteWorkspaceChat = useMutation(api.workspace.deleteWorkspaceChat);
+  const { id } = useParams();
 
   // atoms
   const user = useAtomValue(userAtom);
@@ -48,19 +49,27 @@ export default function ChatHistory() {
     setLoading(false);
   };
 
-  const onDeleteWorkspace = async (id: Id<"workspace"> | undefined) => {
-    if (!id) return;
+  const onDeleteWorkspace = async (
+    workspaceId: Id<"workspace"> | undefined
+  ) => {
+    if (!workspaceId) return;
     setChatDeleting(true);
-    await onDeleteWorkspaceChat({ id });
+    await onDeleteWorkspaceChat({ id: workspaceId });
 
     // update all workspace locally
     setAllWorkspaces((prev) =>
-      prev.filter((workspace) => workspace._id !== id)
+      prev.filter((workspace) => workspace._id !== workspaceId)
     );
     setChatDeleting(false);
     toast.success("Chat deleted successfully!");
     toggleSidebar();
-    router.push("/");
+
+    // navigate to home page if user deleting the opening workspace
+    if (id) {
+      if (id === workspaceId) {
+        router.push("/");
+      }
+    }
   };
 
   const onClickDeleteChat = (data: TChatData) => {

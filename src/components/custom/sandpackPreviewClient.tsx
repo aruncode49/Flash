@@ -42,7 +42,6 @@ export default function SandpackPreviewClient() {
       const sandboxUrl = (await client.getCodeSandboxURL()) as ICodeSandboxUrl;
 
       if (sandboxUrl && sandboxAction.type === "deploy") {
-        console.log("Running Deploy");
         window.open(`https://${sandboxUrl.sandboxId}.csb.app/`);
       }
 

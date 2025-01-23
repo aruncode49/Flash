@@ -13,11 +13,13 @@ import { TPlans } from "@/interfaces/user";
 import { Button } from "@/components/ui/button";
 import DummyBillingDetailsDialog from "@/components/custom/dummyBillingDetailsDialog";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function PricingPage() {
   // hooks
   const onUpdateUserToken = useMutation(api.users.updateUserToken);
   const onUpdateUserPlan = useMutation(api.users.updateUserPlan);
+  const router = useRouter();
 
   // atoms
   const [user, setUser] = useAtom(userAtom);
@@ -52,6 +54,7 @@ export default function PricingPage() {
       toast.success(
         "Plan upgraded successfully! Your tokens has been added into your account."
       );
+      router.push("/");
     }
   };
 
