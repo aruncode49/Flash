@@ -41,7 +41,7 @@ export default function RootLayout({
                     {children}
                   </main>
                   <Footer />
-                  <Toaster richColors />
+                  <Toaster richColors closeButton />
                 </SidebarProvider>
               </ThemeProvider>
             </body>

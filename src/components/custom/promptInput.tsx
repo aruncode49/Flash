@@ -45,7 +45,7 @@ export default function PromptInput() {
     const isWorkspacePage = pathName.includes("workspace");
 
     // check token availablity
-    if (user?.token > 100) {
+    if (user?.token < 100) {
       toast.error(
         "You don't have enough token to generate your response. Please upgrade your plan to get more tokens."
       );
